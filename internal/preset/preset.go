@@ -32,8 +32,8 @@ func (p Preset) FilterValue() string { return p.Name }
 
 func InitialPresets() []Preset {
 	return []Preset{
-		{ID: "classic", Name: "Classic Pomodoro", WorkMin: 25, ShortBreakMin: 5, LongBreakMin: 10, CycleBeforeLongBreak: 4},
-		{ID: "short", Name: "Short Burst", WorkMin: 15, ShortBreakMin: 3, LongBreakMin: 10, CycleBeforeLongBreak: 4},
+		{ID: "classic", Name: "Classic", WorkMin: 25, ShortBreakMin: 5, LongBreakMin: 10, CycleBeforeLongBreak: 4},
+		{ID: "short", Name: "Short", WorkMin: 15, ShortBreakMin: 3, LongBreakMin: 10, CycleBeforeLongBreak: 4},
 	}
 }
 

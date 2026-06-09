@@ -17,8 +17,8 @@ func LoadItems() ([]preset.Preset, error) {
 		return nil, err
 	}
 
-	mainDir := filepath.Join(configDir, "pomodoro")
-	filePath := filepath.Join(configDir, "pomodoro", "presets.json")
+	mainDir := filepath.Join(configDir, "pomodoro-cli")
+	filePath := filepath.Join(mainDir, "presets.json")
 
 	err = os.MkdirAll(mainDir, 0755)
 	if err != nil {
