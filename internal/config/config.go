@@ -9,6 +9,40 @@ import (
 	"github.com/LuisCabantac/pomodoro-cli/internal/preset"
 )
 
+func WriteItems(presets []preset.Preset) error {
+	configDir, err := os.UserConfigDir()
+	if err != nil {
+		return err
+	}
+
+	mainDir := filepath.Join(configDir, "pomodoro-cli")
+	filePath := filepath.Join(mainDir, "presets.json")
+
+	err = os.MkdirAll(mainDir, 0755)
+	if err != nil {
+		return err
+	}
+
+	file, err := os.Create(filePath)
+	if err != nil {
+		return err
+	}
+	defer file.Close()
+
+	presetsList := preset.PresetList{
+		Presets: presets,
+	}
+
+	encoder := json.NewEncoder(file)
+	encoder.SetIndent("", "    ")
+
+	if err = encoder.Encode(presetsList); err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func LoadItems() ([]preset.Preset, error) {
 	defaultPresets := preset.InitialPresets()
 
