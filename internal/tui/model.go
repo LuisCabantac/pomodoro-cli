@@ -345,8 +345,13 @@ func (m Model) View() tea.View {
 			switch {
 			case m.screen == screenTimer && m.quitting:
 				keys = QuittingKeyMap{
-				Confirm: key.NewBinding(key.WithKeys("y"), key.WithHelp("y", "confirm quit")),
-				Cancel:  key.NewBinding(key.WithKeys("esc"), key.WithHelp("esc", "cancel")),
+					Confirm: key.NewBinding(key.WithKeys("y"), key.WithHelp("y", "confirm quit")),
+					Cancel:  key.NewBinding(key.WithKeys("esc"), key.WithHelp("esc", "cancel")),
+				}
+			case m.screen == screenTimer && m.Progress.Percent() == 1.0:
+				keys = FinishedTimerKeyMap{
+					Continue: key.NewBinding(key.WithKeys("enter"), key.WithHelp("enter", "continue")),
+					Quit:     key.NewBinding(key.WithKeys("q", "esc", "ctrl+c"), key.WithHelp("q", "quit")),
 				}
 			case m.state == stateShortBreak || m.state == stateLongBreak:
 				keys = BreakTimerKeyMap{
@@ -364,11 +369,6 @@ func (m Model) View() tea.View {
 			case m.screen == screenTimer && !m.Active:
 				keys = PausedTimerKeyMap{
 					Continue: key.NewBinding(key.WithKeys("space"), key.WithHelp("␣", "continue")),
-					Quit:     key.NewBinding(key.WithKeys("q", "esc", "ctrl+c"), key.WithHelp("q", "quit")),
-				}
-			case m.screen == screenTimer && m.Progress.Percent() >= 1.0:
-				keys = FinishedTimerKeyMap{
-					Continue: key.NewBinding(key.WithKeys("enter"), key.WithHelp("enter", "continue")),
 					Quit:     key.NewBinding(key.WithKeys("q", "esc", "ctrl+c"), key.WithHelp("q", "quit")),
 				}
 			default:
