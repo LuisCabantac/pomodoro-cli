@@ -3,7 +3,7 @@
 A terminal-based Pomodoro timer with a polished TUI, preset system, and cross-platform desktop notifications.
 
 ![Go](https://img.shields.io/badge/Go-1.26+-00ADD8?logo=go)
-[![Release](https://img.shields.io/github/v/release/LuisCabantac/pomodoro-cli)](https://github.com/LuisCabantac/pomodoro-cli/releases)
+[![Release](https://img.shields.io/github/v/release/LuisCabantac/pomodoro-cli?include_prereleases)](https://github.com/LuisCabantac/pomodoro-cli/releases)
 
 ## Features
 
