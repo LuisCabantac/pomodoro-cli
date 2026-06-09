@@ -23,6 +23,10 @@ func main() {
 	args := os.Args[1:]
 	for i := 0; i < len(args); i++ {
 		switch args[i] {
+		case "-h", "--help":
+			fmt.Println("Usage: pomodoro-cli [-s <preset>]")
+			os.Exit(0)
+
 		case "s", "start":
 			if i+1 < len(args) {
 				startPresetID = args[i+1]
