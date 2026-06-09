@@ -142,6 +142,15 @@ func NewModelWithPreset(l list.Model, presetID string) Model {
 	}
 }
 
+func (m Model) currentPreset() (preset.Preset, bool) {
+	for _, item := range m.List.Items() {
+		if p, ok := item.(preset.Preset); ok && p.ID == m.Choice {
+			return p, true
+		}
+	}
+	return preset.Preset{}, false
+}
+
 func (m Model) Init() tea.Cmd {
 	if m.screen == screenTimer {
 		return tickCmd()
@@ -182,7 +191,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 			case "enter":
 				if m.Progress.Percent() == 1.0 {
-					i, ok := m.List.SelectedItem().(preset.Preset)
+					i, ok := m.currentPreset()
 					if ok {
 						switch m.state {
 						case stateWork:
@@ -207,7 +216,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 			case "s":
 				if m.state == stateShortBreak || m.state == stateLongBreak {
-					i, ok := m.List.SelectedItem().(preset.Preset)
+					i, ok := m.currentPreset()
 					if ok {
 						switch m.state {
 						case stateWork:
@@ -306,7 +315,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			return m, tickCmd()
 		}
 
-		i, ok := m.List.SelectedItem().(preset.Preset)
+		i, ok := m.currentPreset()
 		if ok {
 			duration := i.WorkMin
 			if m.state == stateShortBreak {
@@ -349,7 +358,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 func (m Model) View() tea.View {
 	switch m.screen {
 	case screenTimer:
-		i, ok := m.List.SelectedItem().(preset.Preset)
+		i, ok := m.currentPreset()
 		if ok {
 			total := i.WorkMin * 60
 			if m.state == stateShortBreak {
