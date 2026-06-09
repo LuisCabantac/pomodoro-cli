@@ -155,7 +155,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case screenTimer:
 			switch msg.String() {
 			case "space":
-				if m.Progress.Percent() != 1.0 {
+				if m.Progress.Percent() != 1.0 && !m.quitting {
 					m.Active = !m.Active
 					return m, nil
 				}
