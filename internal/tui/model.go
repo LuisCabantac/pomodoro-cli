@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"math"
 	"os/exec"
+	"runtime"
 	"time"
 
 	"charm.land/bubbles/v2/help"
@@ -255,6 +256,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	case tickMsg:
 		if m.Progress.Percent() == 1.0 {
 			var summary, body string
+
 			switch m.state {
 			case stateWork:
 				summary, body = "Time's Up!", "Take a 5-minute break. Step away from the screen."
@@ -263,8 +265,37 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			case stateLongBreak:
 				summary, body = "Long Break Done!", "Ready to start a new cycle. Let's go!"
 			}
+
+			appName := "Pomodoro CLI"
+			var cmd *exec.Cmd
+
+			switch runtime.GOOS {
+			case "windows":
+				psCommand := fmt.Sprintf(
+					`Async; `+
+						`$tg = [Windows.UI.Notifications.ToastNotificationManager, Windows.UI.Notifications, ContentType=WindowsRuntime]::GetTemplateContent([Windows.UI.Notifications.ToastTemplateType, Windows.UI.Notifications, ContentType=WindowsRuntime]::ToastText02); `+
+						`$tg.GetElementsByTagName('text').AppendChild($tg.CreateTextNode('%s')); `+
+						`$tg.GetElementsByTagName('text').AppendChild($tg.CreateTextNode('%s')); `+
+						`$n = [Windows.UI.Notifications.ToastNotification]::new($tg); `+
+						`$n.Priority = [Windows.UI.Notifications.ToastNotificationPriority, Windows.UI.Notifications, ContentType=WindowsRuntime]::High; `+
+						`[Windows.UI.Notifications.ToastNotificationManager, Windows.UI.Notifications, ContentType=WindowsRuntime]::CreateToastNotifier('%s').Show($n)`,
+					summary, body, appName,
+				)
+				cmd = exec.Command("powershell", "-NoProfile", "-Command", psCommand)
+
+			case "darwin":
+				appleScript := fmt.Sprintf(
+					`display notification "%s" with title "%s" subtitle "%s" sound name "Alarm"`,
+					body, appName, summary,
+				)
+				cmd = exec.Command("osascript", "-e", appleScript)
+
+			default:
+				cmd = exec.Command("notify-send", "-u", "critical", "-i", "appointment-soon", "-a", appName, summary, body)
+			}
+
 			notifyCmd := func() tea.Msg {
-				_ = exec.Command("notify-send", "-u", "critical", "-i", "appointment-soon", "-a", "Pomodoro CLI", summary, body).Run()
+				_ = cmd.Run()
 				return nil
 			}
 
