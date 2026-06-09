@@ -30,6 +30,7 @@ func NewModel() tui.Model {
 		List:     l,
 		Progress: progress.New(progress.WithDefaultBlend()),
 		Active:   false,
+		Help:     help.New(),
 	}
 
 	return m
