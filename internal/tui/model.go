@@ -345,8 +345,8 @@ func (m Model) View() tea.View {
 			switch {
 			case m.screen == screenTimer && m.quitting:
 				keys = QuittingKeyMap{
-					Confirm: key.NewBinding(key.WithKeys("y"), key.WithHelp("Confirm quit? y", "yes")),
-					Cancel:  key.NewBinding(key.WithKeys("esc"), key.WithHelp("esc", "cancel")),
+				Confirm: key.NewBinding(key.WithKeys("y"), key.WithHelp("y", "confirm quit")),
+				Cancel:  key.NewBinding(key.WithKeys("esc"), key.WithHelp("esc", "cancel")),
 				}
 			case m.state == stateShortBreak || m.state == stateLongBreak:
 				keys = BreakTimerKeyMap{
