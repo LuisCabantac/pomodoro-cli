@@ -40,10 +40,10 @@ Usage: pomodoro-cli [flags] [command]
 
 Flags:
   -h, --help          Show this help message
-  -s, --start <id>    Start a timer with a preset by ID (skips preset list)
 
 Commands:
   create              Create a new preset
+  s, start <id>    Start a timer with a preset by ID (skips preset list)
 ```
 
 ### Quick start

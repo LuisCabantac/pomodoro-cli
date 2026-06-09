@@ -30,11 +30,11 @@ func main() {
 			fmt.Println("Usage: pomodoro-cli [flags] [command]")
 			fmt.Println()
 			fmt.Println("Flags:")
-			fmt.Println("  -s, --start <preset>   start timer with the given preset")
 			fmt.Println("  -h, --help             show this help")
 			fmt.Println()
 			fmt.Println("Commands:")
 			fmt.Println("  create   create a new preset with --name, --work, --short_break, --long_break, --cycle")
+			fmt.Println("  s, start <preset>   start timer with the given preset")
 			os.Exit(0)
 
 		case "s", "start":
