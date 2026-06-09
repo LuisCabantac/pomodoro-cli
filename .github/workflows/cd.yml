@@ -41,4 +41,5 @@ jobs:
           gh release create "${{ github.ref_name }}" \
             --title "Release ${{ github.ref_name }}" \
             --generate-notes \
-            ${{ steps.check_version.outputs.cli_flag }}
+            ${{ steps.check_version.outputs.cli_flag }} \
+            pomodoro-cli
