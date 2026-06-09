@@ -12,7 +12,6 @@ import (
 	"charm.land/bubbles/v2/progress"
 	tea "charm.land/bubbletea/v2"
 	"charm.land/lipgloss/v2"
-	"github.com/LuisCabantac/pomodoro-cli/internal/config"
 	"github.com/LuisCabantac/pomodoro-cli/internal/preset"
 )
 
@@ -108,7 +107,6 @@ type Model struct {
 	cycle         int
 	Active        bool
 	startTime     time.Time
-	Args          []string
 	quitting      bool
 	progressWidth int
 	Help          help.Model
@@ -120,17 +118,38 @@ func tickCmd() tea.Cmd {
 	})
 }
 
+func NewModel(l list.Model) Model {
+	return Model{
+		List:     l,
+		Progress: progress.New(progress.WithDefaultBlend()),
+		Active:   true,
+		Help:     help.New(),
+	}
+}
+
+func NewModelWithPreset(l list.Model, presetID string) Model {
+	return Model{
+		List:      l,
+		Progress:  progress.New(progress.WithDefaultBlend()),
+		Choice:    presetID,
+		screen:    screenTimer,
+		state:     stateWork,
+		cycle:     0,
+		Active:    true,
+		startTime: time.Now(),
+		Help:      help.New(),
+	}
+}
+
 func (m Model) Init() tea.Cmd {
-	return config.LoadItemsCmd()
+	if m.screen == screenTimer {
+		return tickCmd()
+	}
+	return nil
 }
 
 func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
-
-	case preset.PresetsLoadedMsg:
-		m.Active = true
-		m.List.SetItems(preset.PresetsToItems(msg.Presets))
-		return m, nil
 
 	case tea.KeyPressMsg:
 		switch m.screen {
