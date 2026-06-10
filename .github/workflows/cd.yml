@@ -42,4 +42,4 @@ jobs:
             --title "${{ github.ref_name }}" \
             --generate-notes \
             ${{ steps.check_version.outputs.cli_flag }} \
-            pomodoro-cli
+            pomodoro-cli-*
