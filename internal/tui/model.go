@@ -2,6 +2,7 @@ package tui
 
 import (
 	"fmt"
+	"image/color"
 	"math"
 	"os/exec"
 	"runtime"
@@ -113,6 +114,26 @@ type Model struct {
 	Help          help.Model
 }
 
+func progressColors(state state) (color.Color, color.Color) {
+	switch state {
+	case stateShortBreak:
+		return lipgloss.Color("#006600"), lipgloss.Color("#00cc00")
+	case stateLongBreak:
+		return lipgloss.Color("#0044cc"), lipgloss.Color("#4488ff")
+	default:
+		return lipgloss.Color("#cc0000"), lipgloss.Color("#ff4400")
+	}
+}
+
+func (m Model) updateProgressColors() Model {
+	full, empty := progressColors(m.state)
+	m.Progress = progress.New(progress.WithColors(full, empty), progress.WithScaled(true), progress.WithFillCharacters('█', '░'))
+	m.Progress.EmptyColor = empty
+	m.Progress.SetWidth(m.progressWidth)
+	m.Progress.SetPercent(m.Progress.Percent())
+	return m
+}
+
 func tickCmd() tea.Cmd {
 	return tea.Tick(time.Second*1, func(t time.Time) tea.Msg {
 		return tickMsg(t)
@@ -120,18 +141,26 @@ func tickCmd() tea.Cmd {
 }
 
 func NewModel(l list.Model) Model {
+	full, empty := progressColors(stateWork)
 	return Model{
 		List:     l,
-		Progress: progress.New(progress.WithDefaultBlend()),
+		Progress: newProgressBar(full, empty),
 		Active:   true,
 		Help:     help.New(),
 	}
 }
 
+func newProgressBar(full, empty color.Color) progress.Model {
+	p := progress.New(progress.WithColors(full, empty), progress.WithScaled(true), progress.WithFillCharacters('█', '░'))
+	p.EmptyColor = empty
+	return p
+}
+
 func NewModelWithPreset(l list.Model, presetID string) Model {
+	full, empty := progressColors(stateWork)
 	return Model{
 		List:      l,
-		Progress:  progress.New(progress.WithDefaultBlend()),
+		Progress:  newProgressBar(full, empty),
 		Choice:    presetID,
 		screen:    screenTimer,
 		state:     stateWork,
@@ -174,8 +203,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 					m.cycle = 0
 					m.Active = true
 					m.startTime = time.Now()
-					m.Progress = progress.New(progress.WithDefaultBlend())
-					m.Progress.SetWidth(m.progressWidth)
+					m = m.updateProgressColors()
 					return m, tickCmd()
 				}
 				return m, nil
@@ -209,6 +237,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 							m.cycle = 0
 						}
 					}
+					m = m.updateProgressColors()
 					m.Progress.SetPercent(0)
 					m.startTime = time.Now()
 					return m, tickCmd()
@@ -234,6 +263,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 							m.cycle = 0
 						}
 					}
+					m = m.updateProgressColors()
 					m.Progress.SetPercent(0)
 					m.startTime = time.Now()
 					return m, tickCmd()
