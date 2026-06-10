@@ -19,7 +19,12 @@ for PLATFORM in $PLATFORMS; do
         *)     OUTPUT_ARCH="$GOARCH" ;;
     esac
 
-    OUTPUT="bin/pomodoro-cli-${GOOS}-${OUTPUT_ARCH}${EXT}"
+    case "$GOOS" in
+        darwin) OUTPUT_OS="macos" ;;
+        *)     OUTPUT_OS="$GOOS" ;;
+    esac
+
+    OUTPUT="bin/pomodoro-cli-${OUTPUT_OS}-${OUTPUT_ARCH}${EXT}"
 
     CGO_ENABLED=0 GOOS="$GOOS" GOARCH="$GOARCH" go build -o "$OUTPUT" .
 done
