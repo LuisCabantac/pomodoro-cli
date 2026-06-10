@@ -9,6 +9,7 @@ import (
 	"charm.land/bubbles/v2/key"
 	"charm.land/bubbles/v2/list"
 	tea "charm.land/bubbletea/v2"
+	"charm.land/lipgloss/v2"
 	"github.com/LuisCabantac/pomodoro-cli/internal/config"
 	"github.com/LuisCabantac/pomodoro-cli/internal/preset"
 	"github.com/LuisCabantac/pomodoro-cli/internal/tui"
@@ -172,8 +173,16 @@ func main() {
 		items[i] = p
 	}
 
-	l := list.New(items, list.NewDefaultDelegate(), 0, 0)
-	l.Title = "Presets"
+	d := list.NewDefaultDelegate()
+	d.Styles.SelectedTitle = d.Styles.SelectedTitle.Foreground(lipgloss.Color("10")).Bold(true)
+	d.Styles.SelectedTitle = d.Styles.SelectedTitle.BorderLeftForeground(lipgloss.Color("10"))
+	d.Styles.SelectedDesc = d.Styles.SelectedDesc.Foreground(lipgloss.Color("10"))
+	d.Styles.SelectedDesc = d.Styles.SelectedDesc.BorderLeftForeground(lipgloss.Color("10"))
+
+	l := list.New(items, d, 0, 0)
+	l.Title = "Pomodoro CLI"
+	l.Styles.Title = l.Styles.Title.UnsetBackground().Foreground(lipgloss.Color("9")).Padding(0)
+
 	l.AdditionalShortHelpKeys = func() []key.Binding {
 		return []key.Binding{
 			key.NewBinding(key.WithKeys("enter"), key.WithHelp("enter", "select")),
