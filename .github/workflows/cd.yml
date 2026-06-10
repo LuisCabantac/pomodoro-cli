@@ -25,15 +25,6 @@ jobs:
       - name: Build the app
         run: ./scripts/build.sh
 
-      - name: Check if Beta
-        id: check_version
-        run: |
-          if [[ "${{ github.ref_name }}" == *beta* ]]; then
-            echo "is_prerelease=true" >> $GITHUB_OUTPUT
-          else
-            echo "is_prerelease=false" >> $GITHUB_OUTPUT
-          fi
-
       - name: Create release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -41,5 +32,4 @@ jobs:
           gh release create "${{ github.ref_name }}" \
             --title "${{ github.ref_name }}" \
             --generate-notes \
-            ${{ steps.check_version.outputs.cli_flag }} \
-            pomodoro-cli-*
+            bin/pomodoro-cli-*
