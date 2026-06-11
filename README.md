@@ -5,10 +5,14 @@ A terminal-based Pomodoro timer with a polished TUI, preset system, and cross-pl
 ![Go](https://img.shields.io/badge/Go-1.26+-00ADD8?logo=go)
 [![Release](https://img.shields.io/github/v/release/LuisCabantac/pomodoro-cli?include_prereleases)](https://github.com/LuisCabantac/pomodoro-cli/releases)
 
+![Preset list](./assets/screenshots/list-preview.png)
+![Timer running](./assets/screenshots/timer-preview.png)
+
 ## Features
 
 - **TUI timer** – real-time countdown with progress bar and cycle tracking (`[2/4]`)
 - **Preset system** – switch between timer configurations (Classic 25/5, Short 15/3, or your own)
+- **Custom presets** – create your own timer configurations with `pomodoro-cli create`
 - **Desktop notifications** – native alerts on Linux (notify-send), macOS (osascript), and Windows (toast)
 - **Skip breaks** – press `s` to cut a break short
 - **Safe quit** – `q` / `Esc` / `Ctrl+C` prompts for confirmation before exiting
