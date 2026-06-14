@@ -112,6 +112,7 @@ type Model struct {
 	quitting      bool
 	progressWidth int
 	Help          help.Model
+	SkipList      bool
 }
 
 func progressColors(state state) (color.Color, color.Color) {
@@ -147,6 +148,7 @@ func NewModel(l list.Model) Model {
 		Progress: newProgressBar(full, empty),
 		Active:   true,
 		Help:     help.New(),
+		SkipList: false,
 	}
 }
 
@@ -168,6 +170,7 @@ func NewModelWithPreset(l list.Model, presetID string) Model {
 		Active:    true,
 		startTime: time.Now(),
 		Help:      help.New(),
+		SkipList:  true,
 	}
 }
 
@@ -286,7 +289,10 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 					m.state = 0
 					m.screen = screenList
 					m.quitting = false
-					return m, nil
+
+					if m.SkipList {
+						return m, tea.Quit
+					}
 				}
 				return m, nil
 			}
