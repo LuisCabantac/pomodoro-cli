@@ -127,12 +127,7 @@ func progressColors(state state) (color.Color, color.Color) {
 }
 
 func (m Model) updateProgressColors() Model {
-	var full, empty color.Color
-	if m.Active {
-		full, empty = progressColors(m.state)
-	} else {
-		full, empty = lipgloss.Color("#777777"), lipgloss.Color("#999999")
-	}
+	full, empty := progressColors(m.state)
 	m.Progress = progress.New(progress.WithColors(full, empty), progress.WithScaled(true), progress.WithFillCharacters('█', '░'))
 	m.Progress.EmptyColor = empty
 	m.Progress.SetWidth(m.progressWidth)
@@ -222,7 +217,6 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			case "space":
 				if m.Progress.Percent() != 1.0 && !m.quitting {
 					m.Active = !m.Active
-					m = m.updateProgressColors()
 					return m, nil
 				}
 
