@@ -36,6 +36,7 @@ func main() {
 			fmt.Println("Commands:")
 			fmt.Println("  create   create a new preset with --name, --work, --short_break, --long_break, --cycle")
 			fmt.Println("  s, start <preset>   start timer with the given preset")
+			fmt.Println("  stats  display session statistics and history")
 			os.Exit(0)
 
 		case "s", "start":
