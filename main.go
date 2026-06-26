@@ -12,19 +12,31 @@ import (
 	"charm.land/lipgloss/v2"
 	"github.com/LuisCabantac/pomodoro-cli/internal/config"
 	"github.com/LuisCabantac/pomodoro-cli/internal/preset"
+	"github.com/LuisCabantac/pomodoro-cli/internal/stats"
 	"github.com/LuisCabantac/pomodoro-cli/internal/tui"
 )
 
 func main() {
 	var presets []preset.Preset
-	loadedItems, err := config.LoadItems("presets.json")
+	var currentStats []stats.Stat
+	loadedPresets, err := config.LoadItems("presets.json")
 	if err != nil {
 		fmt.Println("Error loading config:", err)
 		os.Exit(1)
 	}
 
-	if v, ok := loadedItems.(config.PresetList); ok {
+	if v, ok := loadedPresets.(config.PresetList); ok {
 		presets = v.Presets
+	}
+
+	loadedStats, err := config.LoadItems("stats.json")
+	if err != nil {
+		fmt.Println("Error loading stats:", err)
+		os.Exit(1)
+	}
+
+	if v, ok := loadedStats.(config.StatList); ok {
+		currentStats = v.Stats
 	}
 
 	var startPresetID string
@@ -41,8 +53,25 @@ func main() {
 			fmt.Println("Commands:")
 			fmt.Println("  create   create a new preset with --name, --work, --short_break, --long_break, --cycle")
 			fmt.Println("  s, start <preset>   start timer with the given preset")
-			fmt.Println("  stats  display session statistics and history")
+			fmt.Println("  stats  display session statistics and history [--date YYYY-MM-DD]")
 			os.Exit(0)
+
+		case "stats":
+			if i+1 < len(args) && args[i+1] == "--date" {
+				if i+2 >= len(args) {
+					fmt.Fprintf(os.Stderr, "pomodoro-cli: '--date' requires a value\n")
+					fmt.Fprintf(os.Stderr, "See 'pomodoro-cli --help' for usage.\n")
+					os.Exit(1)
+				}
+				stats.PrintStats(args[i+2], currentStats)
+				i += 2
+			} else if i+1 < len(args) {
+				fmt.Fprintf(os.Stderr, "pomodoro-cli: unknown flag '%s'\n", args[i+1])
+				fmt.Fprintf(os.Stderr, "See 'pomodoro-cli --help' for usage.\n")
+				os.Exit(1)
+			} else {
+				stats.PrintStats("today", currentStats)
+			}
 
 		case "s", "start":
 			if i+1 < len(args) {
