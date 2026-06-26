@@ -23,6 +23,18 @@ type Stat struct {
 
 type statGroup struct{ count, duration int }
 
+func SaveStat(stat Stat, currentStats []Stat) []Stat {
+	for i, s := range currentStats {
+		if stat.Date == s.Date && stat.PresetID == s.PresetID {
+			currentStats[i].DurationMin += stat.DurationMin
+			currentStats[i].Count++
+			return currentStats
+		}
+	}
+
+	return append(currentStats, stat)
+}
+
 func PrintStats(date string, stats []Stat) {
 	cleanedDate := strings.ReplaceAll(date, " ", "")
 
