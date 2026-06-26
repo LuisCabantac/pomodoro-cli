@@ -8,7 +8,7 @@ import (
 	"time"
 )
 
-const dateLayout = "2006-01-02"
+const DateLayout = "2006-01-02"
 
 type StatList struct {
 	Stats []Stat `json:"stats"`
@@ -46,7 +46,7 @@ func PrintStats(date string, stats []Stat) {
 		count := 0
 		duration := 0
 		statsToday := map[string]statGroup{}
-		dateNow := time.Now().Format(dateLayout)
+		dateNow := time.Now().Format(DateLayout)
 		for _, stat := range stats {
 			if dateNow == stat.Date {
 				current := statsToday[stat.PresetID]
@@ -71,7 +71,7 @@ func PrintStats(date string, stats []Stat) {
 		os.Exit(0)
 	}
 
-	parsedTime, err := time.Parse(dateLayout, cleanedDate)
+	parsedTime, err := time.Parse(DateLayout, cleanedDate)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -80,7 +80,7 @@ func PrintStats(date string, stats []Stat) {
 	duration := 0
 	statsFromDate := map[string]statGroup{}
 	for _, stat := range stats {
-		if parsedTime.Format(dateLayout) == stat.Date {
+		if parsedTime.Format(DateLayout) == stat.Date {
 			current := statsFromDate[stat.PresetID]
 
 			statsFromDate[stat.PresetID] = statGroup{
@@ -96,7 +96,7 @@ func PrintStats(date string, stats []Stat) {
 		log.Fatal("No entries for that date.")
 	}
 
-	fmt.Printf("%s: %d pomodoros, %d min\n", parsedTime.Format(dateLayout), count, duration)
+	fmt.Printf("%s: %d pomodoros, %d min\n", parsedTime.Format(DateLayout), count, duration)
 	for k, v := range statsFromDate {
 		fmt.Printf("- %s: %d pomodoros, %d min\n", k, v.count, v.duration)
 	}
