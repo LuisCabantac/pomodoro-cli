@@ -16,10 +16,15 @@ import (
 )
 
 func main() {
-	presets, err := config.LoadItems()
+	var presets []preset.Preset
+	loadedItems, err := config.LoadItems("presets.json")
 	if err != nil {
 		fmt.Println("Error loading config:", err)
 		os.Exit(1)
+	}
+
+	if v, ok := loadedItems.(config.PresetList); ok {
+		presets = v.Presets
 	}
 
 	var startPresetID string
@@ -154,7 +159,7 @@ func main() {
 				CycleBeforeLongBreak: cycle,
 			})
 
-			if err := config.WriteItems(presets); err != nil {
+			if err := config.WriteItems("presets.json", presets); err != nil {
 				fmt.Fprintf(os.Stderr, "pomodoro-cli: failed to save preset: %s\n", err)
 				os.Exit(1)
 			}
