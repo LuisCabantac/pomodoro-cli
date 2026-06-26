@@ -32,7 +32,7 @@ func WriteItems[T Items](fileName string, items []T) error {
 		return err
 	}
 
-	mainDir := filepath.Join(configDir, "pomodoro-cli-test")
+	mainDir := filepath.Join(configDir, "pomodoro-cli")
 	filePath := filepath.Join(mainDir, fileName)
 
 	err = os.MkdirAll(mainDir, 0755)
@@ -77,7 +77,7 @@ func LoadItems(fileName string) (ItemsList, error) {
 		return nil, err
 	}
 
-	mainDir := filepath.Join(configDir, "pomodoro-cli-test")
+	mainDir := filepath.Join(configDir, "pomodoro-cli")
 	filePath := filepath.Join(mainDir, fileName)
 
 	err = os.MkdirAll(mainDir, 0755)
