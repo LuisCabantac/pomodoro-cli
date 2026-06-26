@@ -1,5 +1,15 @@
 package stats
 
+import (
+	"fmt"
+	"log"
+	"os"
+	"strings"
+	"time"
+)
+
+const dateLayout = "2006-01-02"
+
 type StatList struct {
 	Stats []Stat `json:"stats"`
 }
@@ -9,4 +19,74 @@ type Stat struct {
 	PresetID    string `json:"presetId"`
 	DurationMin int    `json:"duration_min"`
 	Count       int    `json:"count"`
+}
+
+type statGroup struct{ count, duration int }
+
+func PrintStats(date string, stats []Stat) {
+	cleanedDate := strings.ReplaceAll(date, " ", "")
+
+	if len(stats) == 0 {
+		log.Fatal("No stats has been made yet")
+	}
+
+	if cleanedDate == "today" {
+		count := 0
+		duration := 0
+		statsToday := map[string]statGroup{}
+		dateNow := time.Now().Format(dateLayout)
+		for _, stat := range stats {
+			if dateNow == stat.Date {
+				current := statsToday[stat.PresetID]
+
+				statsToday[stat.PresetID] = statGroup{
+					count:    current.count + stat.Count,
+					duration: current.duration + stat.DurationMin,
+				}
+				count += stat.Count
+				duration += stat.DurationMin
+			}
+		}
+
+		if count == 0 && duration == 0 {
+			log.Fatal("No entries for that date.")
+		}
+
+		fmt.Printf("Today (%s): %d pomodoros, %d min\n", dateNow, count, duration)
+		for k, v := range statsToday {
+			fmt.Printf("- %s: %d pomodoros, %d min\n", k, v.count, v.duration)
+		}
+		os.Exit(0)
+	}
+
+	parsedTime, err := time.Parse(dateLayout, cleanedDate)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	count := 0
+	duration := 0
+	statsFromDate := map[string]statGroup{}
+	for _, stat := range stats {
+		if parsedTime.Format(dateLayout) == stat.Date {
+			current := statsFromDate[stat.PresetID]
+
+			statsFromDate[stat.PresetID] = statGroup{
+				count:    current.count + stat.Count,
+				duration: current.duration + stat.DurationMin,
+			}
+			count += stat.Count
+			duration += stat.DurationMin
+		}
+	}
+
+	if count == 0 && duration == 0 {
+		log.Fatal("No entries for that date.")
+	}
+
+	fmt.Printf("%s: %d pomodoros, %d min\n", parsedTime.Format(dateLayout), count, duration)
+	for k, v := range statsFromDate {
+		fmt.Printf("- %s: %d pomodoros, %d min\n", k, v.count, v.duration)
+	}
+	os.Exit(0)
 }
