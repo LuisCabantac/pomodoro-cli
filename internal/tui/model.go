@@ -14,7 +14,9 @@ import (
 	"charm.land/bubbles/v2/progress"
 	tea "charm.land/bubbletea/v2"
 	"charm.land/lipgloss/v2"
+	"github.com/LuisCabantac/pomodoro-cli/internal/config"
 	"github.com/LuisCabantac/pomodoro-cli/internal/preset"
+	"github.com/LuisCabantac/pomodoro-cli/internal/stats"
 )
 
 var docStyle = lipgloss.NewStyle().Margin(1, 2)
@@ -337,6 +339,37 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 			default:
 				cmd = exec.Command("notify-send", "-u", "critical", "-i", "appointment-soon", "-a", appName, summary, body)
+			}
+
+			if m.state == stateWork {
+				func() {
+					i, ok := m.currentPreset()
+					if !ok {
+						return
+					}
+					loadedStats, err := config.LoadItems("stats.json")
+					if err != nil {
+						return
+					}
+
+					v, ok := loadedStats.(config.StatList)
+					if !ok {
+						return
+					}
+					currentStats := v.Stats
+
+					newStats := stats.SaveStat(stats.Stat{
+						Date:        time.Now().Format(stats.DateLayout),
+						PresetID:    i.ID,
+						DurationMin: i.WorkMin,
+						Count:       1,
+					}, currentStats)
+
+					err = config.WriteItems("stats.json", newStats)
+					if err != nil {
+						return
+					}
+				}()
 			}
 
 			notifyCmd := func() tea.Msg {
