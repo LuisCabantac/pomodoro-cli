@@ -73,7 +73,7 @@ func PrintStats(date string, stats []Stat) {
 
 	parsedTime, err := time.Parse(DateLayout, cleanedDate)
 	if err != nil {
-		log.Fatal(err)
+		log.Fatalf("pomodoro-cli: invalid date '%s' (expected format: YYYY-MM-DD)\n", cleanedDate)
 	}
 
 	count := 0
